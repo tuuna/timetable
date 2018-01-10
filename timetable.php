@@ -85,7 +85,7 @@
     	'__VIEWSTATE' => $__VIEWSTATE,
     	'TextBox1' => '20141346063',
     	'TextBox2' => '19960820',
-    	'TxtTZM' => $code,
+    	'TxtYZM' => $code,
     	'js' => 'RadioButton3',
     	'Button1' => '登陆'
     ];
