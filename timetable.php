@@ -64,14 +64,29 @@ use PHPHtmlParser\Dom;
 		{
 		     $url = 'http://wlkt.nuist.edu.cn/Default.aspx';
 		     $result = $this->curl_request($url);
-		     $pattern = '/<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="(.*?)" \/>/is';
-		     preg_match_all($pattern, $result[0], $matches);
+		     $pattern1 = '/<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="(.*?)" \/>/is';
+		     preg_match_all($pattern1, $result[0], $matches);
 		     $res[0] = $matches[1][0];
 		     $res[1] = $result[1];
+		     $pattern2 = '/<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="(.*?)" \/>/is';
+		   	 preg_match_all($pattern2, $result[0],$matches2);
+		   	 $res[2] = $matches2[1][0];
 		   	 $codes = explode('/', $result[1]);
 		   	 $url = $codes[0].'//'.$codes[2].'/'.$codes[3].'/yzm.aspx';
-			 $code = $this->curl_request($url,'','',1);
-			 $res[2] = $code['cookie'];
+			 $code = $this->curl_request($url,'','',0);
+			 // $img = base64_decode(explode('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">', $code[0])[0]);
+			 $code = explode('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">', $code[0])[0];
+			 $code = base64_encode($code);
+			 $key = "fd5086c3f4da0a95e38dde1a56d93c08";
+			 $data = array(
+  					'key' => $key, //请替换成您自己的key
+  					'codeType' => '4004',
+  					'image' => '',
+  					'dtype' => '',
+  					'base64Str' => $code
+					);
+			 $result = $this->curl_request('http://op.juhe.cn/vercode/index',$data,'',0);
+			 $res[3] = json_decode($result[0],true)['result'];
 		     return $res;
 		}
 
@@ -81,23 +96,23 @@ use PHPHtmlParser\Dom;
 	$result = $timetable->getView();
 	$__VIEWSTATE = $result[0];
 	$site = $result[1];
+	$__VIEWSTATEGENERATOR = $result[2];
 	$site_determin = explode('/', $site);
 	$url = $site_determin[0].'//'.$site_determin[2].'/'.$site_determin[3].'/default.aspx';
-	//$code = explode('=', $result[2])[1];
+	$code = $result[3];
     $post_data = [
     	'__VIEWSTATE' => $__VIEWSTATE,
+    	'__VIEWSTATEGENERATOR' => $__VIEWSTATEGENERATOR,
     	'TextBox1' => $_POST['username'],
     	'TextBox2' => $_POST['password'],
-    	//'TxtYZM' => $code,
+    	'TxtYZM' => $code,
     	'js' => 'RadioButton3',
     	'Button1' => '登陆'
     ];
-    $result = $timetable->curl_request($url,$post_data,$result[2],1);
-    // print_r($result);die;
+    $result = $timetable->curl_request($url,$post_data,'',1);
     $cookie = $result['cookie'];
     $new_url = $site_determin[0].'//'.$site_determin[2].'/'.$site_determin[3].'/public/kebiaoall.aspx';
     $result = $timetable->curl_request($new_url,'',$cookie);
- 	
  	$dom = new Dom;
  	$result = explode('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">', $result[0]);
  	$dom->load($result[1]);
@@ -111,10 +126,10 @@ use PHPHtmlParser\Dom;
  		$final = $dom->find('td');
  		foreach($final as $key => $v) {
  			if($key%8 == 0) {
- 				$i++;
+ 				$i += 2;
  			}
  			$data[$i][$key] = $v->text;
  		}
  	}
- 	return $data;
+ 	 return $data;
     
