@@ -132,4 +132,4 @@ use PHPHtmlParser\Dom;
  		}
  	}
  	 echo json_encode($data);
-}
+
