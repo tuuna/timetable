@@ -77,7 +77,7 @@ use PHPHtmlParser\Dom;
 			 // $img = base64_decode(explode('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">', $code[0])[0]);
 			 $code = explode('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">', $code[0])[0];
 			 $code = base64_encode($code);
-			 $key = "fd5086c3f4da0a95e38dde1a56d93c08";
+			 $key = "";//请替换成您自己的key
 			 $data = array(
   					'key' => $key, //请替换成您自己的key
   					'codeType' => '4004',
