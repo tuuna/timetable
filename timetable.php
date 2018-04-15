@@ -131,5 +131,5 @@ use PHPHtmlParser\Dom;
  			$data[$i][$key] = $v->text;
  		}
  	}
- 	 return $data;
-    
+ 	 echo json_encode($data);
+}
